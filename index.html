@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
+<!doctype html>
+<title>EQinfo</title>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>My Playground</title>
+        <style>
 body {
     font-family: system-ui, sans-serif;
     padding: 24px;
@@ -93,9 +93,10 @@ button {
     color: #ffffff;
 }
 
-.tsunami-NonEffective {
-background: #87ceeb;
-color: #ffffff;
+.tsunami-NonEffective,
+.tsunami-noneffective {
+    background: #87ceeb;
+    color: #ffffff;
 }
 
 .tsunami-watch {
@@ -114,7 +115,7 @@ color: #ffffff;
 }
 
 .tsunami-unknown {
-    background: 696969;
+    background: #696969;
     color: #ffffff;
 }
 
@@ -151,25 +152,13 @@ color: #ffffff;
     border-radius: 10px;
     margin-top: 8px;
 }
-  </style>
-</head>
-<body>
-<!doctype html>
-<title>EQinfo</title>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>My Playground</title>
-        <link rel="stylesheet" href="styles.css" />
+        </style>
     </head>
     <body>
         <h1 id="greeting">ⓘ各地の震度情報</h1>
         <p id="update-time"> --:--:-- 更新</p>
         <div id="result">読み込み中…</div>
-        <script src="script.js"></script>
-    </body>
-</html>
-  <script>
+        <script>
 function scaleText(scale){
     const scales = {
         '-1': '未入電',
@@ -227,7 +216,7 @@ function tsunamiClass(value) {
     const classes = {
         'None': 'tsunami-none',
         'Checking': 'tsunami-checking',
-        'NonEffective': 'tsunami-none',
+        'NonEffective': 'tsunami-NonEffective',
         'Watch': 'tsunami-watch',
         'Warning': 'tsunami-warning',
         'MajorWarning': 'tsunami-major-warning'
@@ -354,7 +343,6 @@ if (issueLabel(issueType)) {
 
 updateEarthquake();
 setInterval(updateEarthquake, 1000);
-
-  </script>
-</body>
+        </script>
+    </body>
 </html>
