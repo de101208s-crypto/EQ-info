@@ -1,9 +1,9 @@
 <!doctype html>
-<title>EQinfo</title>
-<html lang="en">
+<html lang="ja">
     <head>
         <meta charset="utf-8" />
-        <title>My Playground</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>EQinfo</title>
         <style>
 body {
     font-family: system-ui, sans-serif;
@@ -13,23 +13,18 @@ body {
 #greeting {
     color: #3b82f6;
 }
-button {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    cursor: pointer;
-}
 #update-time {
     font-size: 14px;
     color: #666;
     margin: 0 0 16px 0;
 }
 .earthquake {
-    padding: 5px 16px 16px 16px;
+    padding: 8px 16px 16px 16px;
     margin-bottom: 16px;
     border: 1px solid #ddd;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    text-align: left;
 }
 .earthquake h2 {
     margin: 8px 0;
@@ -50,21 +45,20 @@ button {
     margin: 6px 0;
 }
 
-.未入電 { background: red;color: gold;}
-.scale-1 { background: #6494ed;}
-.scale-2 { background: #3cb371;}
-.scale-3 { background: gold;color: #1b1b1f} 
-.scale-4 { background: darkorange;color: #1b1b1f;} 
-.scale-5 { background: #dc143c;color: white;}
-.scale-6 { background: #ff1493; color: white;}
-.scale-7 { background: #4b0082; color: gold;}
+.未入電 { background: red; color: gold; }
+.scale-1 { background: #6494ed; }
+.scale-2 { background: #3cb371; }
+.scale-3 { background: gold; color: #1b1b1f; }
+.scale-4 { background: darkorange; color: #1b1b1f; }
+.scale-5 { background: #dc143c; color: white; }
+.scale-6 { background: #ff1493; color: white; }
+.scale-7 { background: #4b0082; color: gold; }
 
 .issue-label {
     display: block;
     width: fit-content;
     padding: 5px 10px;
-    margin-left: 0;
-    margin-bottom: 6px;
+    margin: 0 0 6px 0;
     border-radius: 8px;
     background: #696969;
     color: white;
@@ -82,84 +76,88 @@ button {
     font-size: 14px;
     font-weight: bold;
 }
-
-.tsunami-none {
-    background: #696969;
-    color: #ffffff;
-}
-
-.tsunami-checking {
-    background: #696969;
-    color: #ffffff;
-}
-
-.tsunami-NonEffective,
-.tsunami-noneffective {
-    background: #87ceeb;
-    color: #ffffff;
-}
-
-.tsunami-watch {
-    background: gold;
-    color: #ffffff;
-}
-
-.tsunami-warning {
-    background: red;
-    color: #ffffff;
-}
-
-.tsunami-major-warning {
-    background: #8a2be2;
-    color: #ffffff;
-}
-
-.tsunami-unknown {
-    background: #696969;
-    color: #ffffff;
-}
-
-.earthquake {
-    text-align: left;
-}
+.tsunami-none { background: #696969; color: #ffffff; }
+.tsunami-checking { background: #696969; color: #ffffff; }
+.tsunami-NonEffective { background: #87ceeb; color: #ffffff; }
+.tsunami-watch { background: gold; color: #ffffff; }
+.tsunami-warning { background: red; color: #ffffff; }
+.tsunami-major-warning { background: #8a2be2; color: #ffffff; }
+.tsunami-unknown { background: #696969; color: #ffffff; }
 
 .earthquake .scale {
     display: block;
     width: fit-content;
     margin-left: 0;
     margin-right: auto;
-}
-.earthquake {
-    padding-top: 8px;
-}
-
-.earthquake .issue-label {
-    display: block;
     margin-top: 0;
 }
-
-.earthquake .scale {
-    margin-top: 0;
-}
-
 .earthquake .max-scale {
-    margin-top: 5px;
-}
-
-.max-scale {
     padding: 8px 16px;
     font-size: 18px;
     border-radius: 10px;
-    margin-top: 8px;
+    margin-top: 5px;
 }
-        </style>
+
+.hypo-map {
+    width: 100%;
+    height: 320px;
+    border: 0;
+    border-radius: 8px;
+    margin-top: 8px;
+    z-index: 0;
+    background: #f1f1f1;
+}
+.hypo-img {
+    display: block;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    min-height: 120px;
+    border-radius: 8px;
+    margin-top: 8px;
+    background: #f1f1f1;
+}
+.map-msg {
+    font-size: 13px;
+    color: #666;
+    margin: 6px 0;
+}
+
+/* スマホ(狭い画面): 上から 情報 → 地図 → 各地の震度 */
+.eq-map {
+    margin: 4px 0 8px 0;
+}
+
+/* 広い画面: 左に情報、右に地図 */
+@media (min-width: 800px) {
+    .earthquake {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+            "head map"
+            "points map";
+        column-gap: 24px;
+    }
+    .eq-head   { grid-area: head; }
+    .eq-points { grid-area: points; }
+    .eq-map {
+        grid-area: map;
+        align-self: start;
+        margin: 8px 0 0 0;
+    }
+    .hypo-img {
+        max-width: 100%;
+    }
+}
+    </style>
     </head>
     <body>
         <h1 id="greeting">ⓘ各地の震度情報</h1>
         <p id="update-time"> --:--:-- 更新</p>
         <div id="result">読み込み中…</div>
         <script>
-function scaleText(scale){
+function scaleText(scale) {
     const scales = {
         '-1': '未入電',
         10: '1',
@@ -177,7 +175,7 @@ function scaleText(scale){
 
 function scaleClass(scale) {
     const classes = {
-        '-1':'未入電',
+        '-1': '未入電',
         10: 'scale-1',
         20: 'scale-2',
         30: 'scale-3',
@@ -194,7 +192,7 @@ function scaleClass(scale) {
 function issueLabel(type) {
     const labels = {
         'ScalePrompt': 'ⓘ 震度速報',
-        'Destination': 'ⓘ 震源情報',
+        'Destination': 'ⓘ 震源情報'
     };
     return labels[type] ?? '';
 }
@@ -208,7 +206,6 @@ function tsunamiText(value) {
         'Warning': '津波警報',
         'MajorWarning': '大津波警報'
     };
-
     return tsunami[value] ?? '津波不明';
 }
 
@@ -221,15 +218,25 @@ function tsunamiClass(value) {
         'Warning': 'tsunami-warning',
         'MajorWarning': 'tsunami-major-warning'
     };
-
     return classes[value] ?? 'tsunami-unknown';
 }
+
+// 前回表示したデータの目印(変わったときだけ描き直す)
+let lastKey = '';
 
 function updateEarthquake() {
     fetch('https://api.p2pquake.net/v2/history?codes=551&limit=5')
         .then(response => response.json())
         .then(data => {
             const now = new Date();
+            document.getElementById('update-time').textContent =
+                now.toLocaleTimeString() + ' 更新';
+
+            // データに変化がなければ何もしない(地図のチカチカ防止)
+            const key = data.map(item => item.id).join(',');
+            if (key === lastKey) return;
+            lastKey = key;
+
             let html = '';
 
             data.forEach((item, index) => {
@@ -243,45 +250,37 @@ function updateEarthquake() {
                 });
 
                 const place = item.earthquake.hypocenter.name ?? '調査中';
-const issueType = item.issue.type;
+                const issueType = item.issue.type;
 
-const magnitudeValue =
-    item.earthquake.hypocenter.magnitude;
+                const magnitudeValue = item.earthquake.hypocenter.magnitude;
+                const depthValue = item.earthquake.hypocenter.depth;
 
-const depthValue =
-    item.earthquake.hypocenter.depth;
+                const magnitude =
+                    magnitudeValue == null || magnitudeValue < 0
+                        ? '調査中'
+                        : magnitudeValue.toFixed(1);
 
-const magnitude =
-    magnitudeValue == null || magnitudeValue < 0
-        ? '調査中'
-        : magnitudeValue.toFixed(1);
+                const depth =
+                    depthValue == null || depthValue < 0
+                        ? '調査中'
+                        : depthValue === 0
+                        ? 'ごく浅い'
+                        : depthValue + 'km';
 
-const depth =
-    depthValue == null || depthValue < 0
-        ? '調査中'
-        : depthValue === 0
-        ? 'ごく浅い'
-        : depthValue + 'km';
-
-const time =
-    item.earthquake.time ?? '調査中';
-
-const tsunami =
-    item.earthquake.domesticTsunami ?? 'Unknown';   
+                const time = item.earthquake.time ?? '調査中';
+                const tsunami = item.earthquake.domesticTsunami ?? 'Unknown';
 
                 html += `<div class="earthquake">`;
+                html += `<div class="eq-head">`;
 
-if (issueLabel(issueType)) {
-    html += `<div class="issue-label">${issueLabel(issueType)}</div>`;
-}
-
-                if (
-                    issueType !== 'ScalePrompt' &&
-                    issueType !== 'Destination'
-                ) {
-                html += `<div class="scale max-scale ${scaleClass(itemMaxScale)}">最大震度 ${scaleText(itemMaxScale)}</div>`;
+                if (issueLabel(issueType)) {
+                    html += `<div class="issue-label">${issueLabel(issueType)}</div>`;
                 }
-       
+
+                if (issueType !== 'ScalePrompt' && issueType !== 'Destination') {
+                    html += `<div class="scale max-scale ${scaleClass(itemMaxScale)}">最大震度 ${scaleText(itemMaxScale)}</div>`;
+                }
+
                 html += `<p>${time} ごろ</p>
                     <h3>${place}</h3>`;
 
@@ -292,17 +291,29 @@ if (issueLabel(issueType)) {
                         ・深さ: ${depth}
                     </h3>`;
                 }
-            if (issueType !== 'ScalePrompt') {
-    html += `
-        <div class="tsunami-icon ${tsunamiClass(tsunami)}">
-            <span>${tsunamiText(tsunami)}</span>
-        </div>
-    `;
-}
+
+                if (issueType !== 'ScalePrompt') {
+                    html += `
+                        <div class="tsunami-icon ${tsunamiClass(tsunami)}">
+                            <span>${tsunamiText(tsunami)}</span>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;   // eq-head ここまで
+
+                // P2P地震情報の震源地図
+                html += `
+                    <div class="eq-map">
+                        <img class="hypo-img" alt="震源地図"
+                            data-id="${item.id}" data-try="0"
+                            src="https://cdn.p2pquake.net/app/images/${item.id}_trim_big.png">
+                        <p class="map-msg" style="display:none">地図を準備中です…</p>
+                    </div>`;
+
                 if (issueType !== 'Destination') {
-                    html += `<p>
-                        ＊各地の震度は以下の通りです＊
-                    </p>`;
+                    html += `<div class="eq-points">`;
+                    html += `<p>＊各地の震度は以下の通りです＊</p>`;
 
                     const sortedPoints = [...points].sort(
                         (a, b) => b.scale - a.scale
@@ -312,7 +323,6 @@ if (issueLabel(issueType)) {
                     let currentPref = '';
 
                     sortedPoints.forEach(point => {
-
                         if (point.scale !== currentScale) {
                             html += `<div class="scale ${scaleClass(point.scale)}">
                                 震度 ${scaleText(point.scale)}
@@ -329,20 +339,55 @@ if (issueLabel(issueType)) {
 
                         html += `<p>${point.addr}</p>`;
                     });
+
+                    html += `</div>`;   // eq-points ここまで
                 }
 
                 html += `</div>`;
             });
 
-            document.getElementById('update-time').textContent =
-                now.toLocaleTimeString() + ' 更新';
-
             document.getElementById('result').innerHTML = html;
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('update-time').textContent =
+                '取得に失敗しました';
         });
 }
 
+// 地図画像が読み込めなかったら、10秒おきに最大6回やり直す
+// (登録直後は地図画像がまだできていないことがあるため)
+document.getElementById('result').addEventListener('error', e => {
+    const img = e.target;
+    if (!img.matches || !img.matches('img.hypo-img')) return;
+    const msg = img.parentElement.querySelector('.map-msg');
+    const tries = Number(img.dataset.try);
+    if (tries >= 6) {
+        if (msg) {
+            msg.textContent = '地図画像が見つかりません';
+            msg.style.display = '';
+        }
+        return;
+    }
+    img.dataset.try = String(tries + 1);
+    if (msg) msg.style.display = '';
+    setTimeout(() => {
+        if (!img.isConnected) return;
+        img.src = 'https://cdn.p2pquake.net/app/images/' + img.dataset.id +
+            '_trim_big.png?t=' + Date.now();
+    }, 10000);
+}, true);
+
+// 読み込めたらメッセージを消す
+document.getElementById('result').addEventListener('load', e => {
+    const img = e.target;
+    if (!img.matches || !img.matches('img.hypo-img')) return;
+    const msg = img.parentElement.querySelector('.map-msg');
+    if (msg) msg.style.display = 'none';
+}, true);
+
 updateEarthquake();
-setInterval(updateEarthquake, 1000);
+setInterval(updateEarthquake, 5000);
         </script>
     </body>
 </html>
