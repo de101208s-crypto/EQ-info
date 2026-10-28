@@ -225,7 +225,7 @@ function tsunamiClass(value) {
 let lastKey = '';
 
 function updateEarthquake() {
-    fetch('https://api.p2pquake.net/v2/history?codes=551&limit=5')
+    fetch('https://api.p2pquake.net/v2/history?codes=551&limit=9')
         .then(response => response.json())
         .then(data => {
             const now = new Date();
