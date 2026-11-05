@@ -249,7 +249,7 @@ function updateEarthquake() {
                     }
                 });
 
-                const place = item.earthquake.hypocenter.name ?? '調査中';
+                const place = item.earthquake.hypocenter.name || '震源：調査中';
                 const issueType = item.issue.type;
 
                 const magnitudeValue = item.earthquake.hypocenter.magnitude;
