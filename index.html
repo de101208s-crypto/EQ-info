@@ -1,10 +1,15 @@
 <!doctype html>
 <html lang="ja">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>EQinfo</title>
-        <style>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EQinfo</title>
+
+    <!-- アプリアイコン -->
+    <link rel="icon" type="image/png" href="IMG_2582.png">
+    <link rel="apple-touch-icon" href="IMG_2582.png">
+
+    <style>
 body {
     font-family: system-ui, sans-serif;
     padding: 24px;
@@ -26,15 +31,9 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     text-align: left;
 }
-.earthquake h2 {
-    margin: 8px 0;
-}
-.earthquake p {
-    margin: 6px 0;
-}
-.earthquake h3 {
-    margin: 12px 0;
-}
+.earthquake h2 { margin: 8px 0; }
+.earthquake p { margin: 6px 0; }
+.earthquake h3 { margin: 12px 0; }
 .scale {
     display: inline-block;
     padding: 5px 10px;
@@ -44,7 +43,6 @@ body {
     background: #808080;
     margin: 6px 0;
 }
-
 .未入電 { background: red; color: gold; }
 .scale-1 { background: #6494ed; }
 .scale-2 { background: #3cb371; }
@@ -53,7 +51,6 @@ body {
 .scale-5 { background: #dc143c; color: white; }
 .scale-6 { background: #ff1493; color: white; }
 .scale-7 { background: #4b0082; color: gold; }
-
 .issue-label {
     display: block;
     width: fit-content;
@@ -65,7 +62,6 @@ body {
     font-size: 14px;
     font-weight: 700;
 }
-
 .tsunami-icon {
     display: inline-flex;
     align-items: center;
@@ -76,14 +72,16 @@ body {
     font-size: 14px;
     font-weight: bold;
 }
-.tsunami-none { background: #696969; color: #ffffff; }
-.tsunami-checking { background: #696969; color: #ffffff; }
+.tsunami-none,
+.tsunami-checking,
+.tsunami-unknown {
+    background: #696969;
+    color: #ffffff;
+}
 .tsunami-NonEffective { background: #87ceeb; color: #ffffff; }
 .tsunami-watch { background: gold; color: #ffffff; }
 .tsunami-warning { background: red; color: #ffffff; }
 .tsunami-major-warning { background: #8a2be2; color: #ffffff; }
-.tsunami-unknown { background: #696969; color: #ffffff; }
-
 .earthquake .scale {
     display: block;
     width: fit-content;
@@ -97,7 +95,6 @@ body {
     border-radius: 10px;
     margin-top: 5px;
 }
-
 .hypo-map {
     width: 100%;
     height: 320px;
@@ -122,13 +119,8 @@ body {
     color: #666;
     margin: 6px 0;
 }
+.eq-map { margin: 4px 0 8px 0; }
 
-/* スマホ(狭い画面): 上から 情報 → 地図 → 各地の震度 */
-.eq-map {
-    margin: 4px 0 8px 0;
-}
-
-/* 広い画面: 左に情報、右に地図 */
 @media (min-width: 800px) {
     .earthquake {
         display: grid;
@@ -139,24 +131,23 @@ body {
             "points map";
         column-gap: 24px;
     }
-    .eq-head   { grid-area: head; }
+    .eq-head { grid-area: head; }
     .eq-points { grid-area: points; }
     .eq-map {
         grid-area: map;
         align-self: start;
         margin: 8px 0 0 0;
     }
-    .hypo-img {
-        max-width: 100%;
-    }
+    .hypo-img { max-width: 100%; }
 }
     </style>
-    </head>
-    <body>
-        <h1 id="greeting">ⓘ各地の震度情報</h1>
-        <p id="update-time"> --:--:-- 更新</p>
-        <div id="result">読み込み中…</div>
-        <script>
+</head>
+<body>
+    <h1 id="greeting">ⓘ各地の震度情報</h1>
+    <p id="update-time"> --:--:-- 更新</p>
+    <div id="result">読み込み中…</div>
+
+    <script>
 function scaleText(scale) {
     const scales = {
         '-1': '未入電',
@@ -221,7 +212,6 @@ function tsunamiClass(value) {
     return classes[value] ?? 'tsunami-unknown';
 }
 
-// 前回表示したデータの目印(変わったときだけ描き直す)
 let lastKey = '';
 
 function updateEarthquake() {
@@ -232,7 +222,6 @@ function updateEarthquake() {
             document.getElementById('update-time').textContent =
                 now.toLocaleTimeString() + ' 更新';
 
-            // データに変化がなければ何もしない(地図のチカチカ防止)
             const key = data.map(item => item.id).join(',');
             if (key === lastKey) return;
             lastKey = key;
@@ -300,9 +289,8 @@ function updateEarthquake() {
                     `;
                 }
 
-                html += `</div>`;   // eq-head ここまで
+                html += `</div>`;
 
-                // P2P地震情報の震源地図
                 html += `
                     <div class="eq-map">
                         <img class="hypo-img" alt="震源地図"
@@ -340,7 +328,7 @@ function updateEarthquake() {
                         html += `<p>${point.addr}</p>`;
                     });
 
-                    html += `</div>`;   // eq-points ここまで
+                    html += `</div>`;
                 }
 
                 html += `</div>`;
@@ -355,13 +343,12 @@ function updateEarthquake() {
         });
 }
 
-// 地図画像が読み込めなかったら、10秒おきに最大6回やり直す
-// (登録直後は地図画像がまだできていないことがあるため)
 document.getElementById('result').addEventListener('error', e => {
     const img = e.target;
     if (!img.matches || !img.matches('img.hypo-img')) return;
     const msg = img.parentElement.querySelector('.map-msg');
     const tries = Number(img.dataset.try);
+
     if (tries >= 6) {
         if (msg) {
             msg.textContent = '地図画像が見つかりません';
@@ -369,8 +356,10 @@ document.getElementById('result').addEventListener('error', e => {
         }
         return;
     }
+
     img.dataset.try = String(tries + 1);
     if (msg) msg.style.display = '';
+
     setTimeout(() => {
         if (!img.isConnected) return;
         img.src = 'https://cdn.p2pquake.net/app/images/' + img.dataset.id +
@@ -378,7 +367,6 @@ document.getElementById('result').addEventListener('error', e => {
     }, 10000);
 }, true);
 
-// 読み込めたらメッセージを消す
 document.getElementById('result').addEventListener('load', e => {
     const img = e.target;
     if (!img.matches || !img.matches('img.hypo-img')) return;
@@ -388,6 +376,6 @@ document.getElementById('result').addEventListener('load', e => {
 
 updateEarthquake();
 setInterval(updateEarthquake, 5000);
-        </script>
-    </body>
+    </script>
+</body>
 </html>
